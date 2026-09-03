@@ -1,0 +1,4 @@
+# extensions.txt e uma LISTA, nao um dotfile: sem isto o stow criaria
+# ~/extensions.txt na raiz da home. Reinstale as extensoes com:
+#   xargs -n1 code --install-extension < vscode/extensions.txt
+^/extensions\.txt$

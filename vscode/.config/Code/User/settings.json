@@ -1,0 +1,112 @@
+{
+  // Editor: fonte e legibilidade
+  "editor.fontFamily": "JetBrainsMonoNL Nerd Font",
+  "editor.fontSize": 16,
+  "editor.lineHeight": 1.4,
+  "editor.wordWrap": "on",
+
+  // Editor: comportamento e foco visual
+  "editor.renderLineHighlight": "gutter",
+  "editor.semanticHighlighting.enabled": false,
+  "editor.minimap.enabled": false,
+  "editor.stickyScroll.enabled": false,
+  "editor.guides.indentation": false,
+  "editor.guides.bracketPairs": true,
+  "breadcrumbs.enabled": false,
+  "editor.fontLigatures": true,
+  "editor.cursorBlinking": "smooth",
+  "editor.cursorSmoothCaretAnimation": "on",
+
+  // Explorer
+  "explorer.compactFolders": false,
+
+  // Workbench: aparência e layout
+  "workbench.editor.labelFormat": "short",
+  "workbench.statusBar.visible": true,
+  "workbench.startupEditor": "none",
+  "workbench.activityBar.location": "top",
+
+  // Símbolos
+  "symbols.hidesExplorerArrows": false,
+
+  // Janela
+  "window.menuBarVisibility": "compact",
+  "window.commandCenter": false,
+
+  // Extensões
+  "extensions.ignoreRecommendations": true,
+
+  // CodeSnap
+  "codesnap.boxShadow": "rgba(0, 0, 0, 0.55) 0px",
+  "codesnap.target": "window",
+  "codesnap.transparentBackground": true,
+
+  // Terminal integrado
+  "terminal.integrated.fontFamily": "JetBrainsMono Nerd Font",
+  "terminal.integrated.fontSize": 14,
+  "terminal.integrated.cursorBlinking": true,
+  "terminal.integrated.defaultProfile.linux": "zsh",
+  "terminal.integrated.profiles.linux": {
+    "zsh": {
+      "path": "/usr/bin/zsh",
+    },
+  },
+
+  // Python
+  "python-envs.defaultEnvManager": "ms-python.python:pyenv",
+
+  "liveServer.settings.donotShowInfoMsg": true,
+  "html.autoClosingTags": false,
+  "git.autofetch": true,
+  "code-runner.clearPreviousOutput": true,
+  "git.confirmSync": false,
+  "liveServer.settings.donotVerifyTags": true,
+  "explorer.confirmDelete": false,
+  "git.enableSmartCommit": true,
+  "explorer.confirmDragAndDrop": false,
+  "terminal.integrated.stickyScroll.enabled": false,
+  "prettier.configPath": "./.prettierrc.js",
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "explicit",
+  },
+  "claudeCode.preferredLocation": "panel",
+  "js/ts.updateImportsOnFileMove.enabled": "always",
+  "code-runner.runInTerminal": true,
+  "code-runner.executorMap": {
+    "javascript": "node",
+    "python": "clear ; python3 -u",
+    "typescript": "ts-node",
+  },
+  "code-runner.ignoreSelection": true,
+  "editor.formatOnSave": true,
+  "claudeCode.environmentVariables": [],
+  "security.promptForLocalFileProtocolHandling": false,
+  "workbench.iconTheme": "symbols",
+
+  // Formatação para React e JavaScript (Requer a extensão do Prettier instalada)
+  "[javascript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+  },
+  "[javascriptreact]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+  },
+  "[typescript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+  },
+  "[typescriptreact]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+  },
+  "chat.viewSessions.orientation": "stacked",
+  "chat.instructionsFilesLocations": {
+    ".github/instructions": true,
+    ".claude/rules": true,
+    "~/.copilot/instructions": true,
+    "~/.claude/rules": true,
+    "/tmp/postman-collections-post-response.instructions.md": true,
+    "/tmp/postman-collections-pre-request.instructions.md": true,
+    "/tmp/postman-folder-post-response.instructions.md": true,
+    "/tmp/postman-folder-pre-request.instructions.md": true,
+    "/tmp/postman-http-request-post-response.instructions.md": true,
+    "/tmp/postman-http-request-pre-request.instructions.md": true
+  },
+}

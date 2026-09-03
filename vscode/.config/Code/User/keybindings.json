@@ -1,0 +1,184 @@
+// Place your key bindings in this file to override the defaults
+[
+    {
+    "key": "shift+alt+down",
+    "command": "editor.action.copyLinesDownAction",
+    "when": "editorTextFocus && !editorReadonly"
+},
+{
+    "key": "shift+alt+up",
+    "command": "editor.action.copyLinesUpAction",
+    "when": "editorTextFocus && !editorReadonly"
+},
+{
+    "key": "shift+pagedown",
+    "command": "editor.action.goToBottomHover",
+    "when": "editorHoverFocused"
+},
+{
+    "key": "end",
+    "command": "-editor.action.goToBottomHover",
+    "when": "editorHoverFocused"
+},
+{
+    "key": "shift+up",
+    "command": "editor.action.goToTopHover",
+    "when": "editorHoverFocused"
+},
+{
+    "key": "home",
+    "command": "-editor.action.goToTopHover",
+    "when": "editorHoverFocused"
+},
+{
+    "key": "shift+pageup",
+    "command": "editor.action.pageUpHover",
+    "when": "editorHoverFocused"
+},
+{
+    "key": "pageup",
+    "command": "-editor.action.pageUpHover",
+    "when": "editorHoverFocused"
+},
+{
+    "key": "shift+down",
+    "command": "editor.action.pageDownHover",
+    "when": "editorHoverFocused"
+},
+{
+    "key": "pagedown",
+    "command": "-editor.action.pageDownHover",
+    "when": "editorHoverFocused"
+},
+{
+    "key": "shift+pagedown",
+    "command": "cursorPageDown",
+    "when": "textInputFocus"
+},
+{
+    "key": "pagedown",
+    "command": "-cursorPageDown",
+    "when": "textInputFocus"
+},
+{
+    "key": "shift+pageup",
+    "command": "cursorPageUp",
+    "when": "textInputFocus"
+},
+{
+    "key": "pageup",
+    "command": "-cursorPageUp",
+    "when": "textInputFocus"
+},
+{
+    "key": "pageup",
+    "command": "list.focusFirst",
+    "when": "listFocus && !inputFocus && !treestickyScrollFocused"
+},
+{
+    "key": "home",
+    "command": "-list.focusFirst",
+    "when": "listFocus && !inputFocus && !treestickyScrollFocused"
+},
+{
+    "key": "end",
+    "command": "cursorEnd",
+    "when": "textInputFocus"
+},
+{
+    "key": "end",
+    "command": "-cursorEnd",
+    "when": "textInputFocus"
+},
+{
+    "key": "home",
+    "command": "cursorHome",
+    "when": "textInputFocus"
+},
+{
+    "key": "home",
+    "command": "-cursorHome",
+    "when": "textInputFocus"
+},
+{
+    "key": "pageup",
+    "command": "firstCompressedFolder",
+    "when": "explorerViewletCompressedFocus && filesExplorerFocus && foldersViewVisible && !explorerViewletCompressedFirstFocus && !inputFocus"
+},
+{
+    "key": "home",
+    "command": "-firstCompressedFolder",
+    "when": "explorerViewletCompressedFocus && filesExplorerFocus && foldersViewVisible && !explorerViewletCompressedFirstFocus && !inputFocus"
+},
+{
+    "key": "pageup",
+    "command": "workbench.statusBar.focusFirst",
+    "when": "statusBarFocused"
+},
+{
+    "key": "home",
+    "command": "-workbench.statusBar.focusFirst",
+    "when": "statusBarFocused"
+},
+{
+    "key": "shift+alt+f",
+    "command": "editor.action.formatDocument",
+    "when": "editorHasDocumentFormattingProvider && editorTextFocus && !editorReadonly && !inCompositeEditor"
+},
+{
+    "key": "ctrl+shift+i",
+    "command": "-editor.action.formatDocument",
+    "when": "editorHasDocumentFormattingProvider && editorTextFocus && !editorReadonly && !inCompositeEditor"
+},
+{
+    "key": "shift+alt+f",
+    "command": "editor.action.formatDocument.none",
+    "when": "editorTextFocus && !editorHasDocumentFormattingProvider && !editorReadonly"
+},
+{
+    "key": "ctrl+shift+i",
+    "command": "-editor.action.formatDocument.none",
+    "when": "editorTextFocus && !editorHasDocumentFormattingProvider && !editorReadonly"
+},
+{
+    "key": "ctrl+k ctrl+c",
+    "command": "editor.action.addCommentLine",
+    "when": "editorTextFocus && !editorReadonly"
+},
+{
+    "key": "ctrl+k ctrl+c",
+    "command": "-editor.action.addCommentLine",
+    "when": "editorTextFocus && !editorReadonly"
+},
+{
+    "key": "ctrl+k ctrl+c",
+    "command": "editor.action.removeCommentLine",
+    "when": "editorTextFocus && !editorReadonly"
+},
+{
+    "key": "ctrl+k ctrl+u",
+    "command": "-editor.action.removeCommentLine",
+    "when": "editorTextFocus && !editorReadonly"
+},
+{
+    "key": "ctrl+k ctrl+c",
+    "command": "workbench.action.addComment",
+    "when": "activeCursorHasCommentingRange"
+},
+{
+    "key": "ctrl+k ctrl+alt+c",
+    "command": "-workbench.action.addComment",
+    "when": "activeCursorHasCommentingRange"
+},
+{
+    "key": "ctrl+;",
+    "command": "editor.action.commentLine",
+    "when": "editorTextFocus && !editorReadonly"
+},
+{
+    "key": "ctrl+/",
+    "command": "-editor.action.commentLine",
+    "when": "editorTextFocus && !editorReadonly"
+}
+
+]

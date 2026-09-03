@@ -1,0 +1,37 @@
+# Segunda linha de defesa: se alguem aplicar o stow SEM --no-folding,
+# ele linka a pasta inteira e o app passa a escrever dentro do repo.
+# Estas regras evitam que isso vire commit.
+
+# Token OAuth do GitHub CLI - o gh grava aqui no primeiro login
+gh/.config/gh/hosts.yml
+
+# Estado e cache do VS Code (o repo versiona so settings/keybindings)
+vscode/.config/Code/*
+!vscode/.config/Code/User/
+vscode/.config/Code/User/*
+!vscode/.config/Code/User/settings.json
+!vscode/.config/Code/User/keybindings.json
+!vscode/.config/Code/User/snippets/
+
+# Credenciais e chaves, em qualquer pacote
+**/.ssh/
+**/.gnupg/
+**/.aws/
+**/hosts.yml
+**/.credentials.json
+**/*.pem
+**/*.key
+!kitty/.config/kitty/*.png
+
+# .env de projeto nunca entra aqui
+**/.env
+**/.env.*
+!**/.env.example
+
+# Backups e temporarios
+*.bak
+*.bak-*
+*.orig
+*.rej
+*~
+.DS_Store
