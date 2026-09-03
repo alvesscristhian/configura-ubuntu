@@ -1,0 +1,38 @@
+UNIT FILE                                                        STATE   PRESET
+ubuntu-report.path                                               enabled enabled
+filter-chain.service                                             enabled enabled
+gcr-ssh-agent.service                                            enabled enabled
+gnome-keyring-daemon.service                                     enabled enabled
+mpris-proxy.service                                              enabled enabled
+obex.service                                                     enabled enabled
+onedrive.service                                                 enabled enabled
+org.freedesktop.IBus.session.GNOME.service                       enabled enabled
+pipewire-pulse.service                                           enabled enabled
+pipewire.service                                                 enabled enabled
+snap.prompting-client.daemon.service                             enabled enabled
+snap.snapd-desktop-integration.snapd-desktop-integration.service enabled enabled
+spice-vdagent.service                                            enabled enabled
+user-session-migration.service                                   enabled enabled
+wireplumber.service                                              enabled enabled
+xdg-desktop-portal-rewrite-launchers.service                     enabled enabled
+xdg-user-dirs.service                                            enabled enabled
+dirmngr.socket                                                   enabled enabled
+gcr-ssh-agent.socket                                             enabled enabled
+gnome-keyring-daemon.socket                                      enabled enabled
+gpg-agent-browser.socket                                         enabled enabled
+gpg-agent-extra.socket                                           enabled enabled
+gpg-agent-ssh.socket                                             enabled enabled
+gpg-agent.socket                                                 enabled enabled
+keyboxd.socket                                                   enabled enabled
+pipewire-pulse.socket                                            enabled enabled
+pipewire.socket                                                  enabled enabled
+pk-debconf-helper.socket                                         enabled enabled
+snapd.session-agent.socket                                       enabled enabled
+speech-dispatcher.socket                                         enabled enabled
+ssh-agent.socket                                                 enabled enabled
+launchpadlib-cache-clean.timer                                   enabled enabled
+snap.firmware-updater.firmware-notifier.timer                    enabled enabled
+ubuntu-insights-collect.timer                                    enabled enabled
+ubuntu-insights-upload.timer                                     enabled enabled
+
+35 unit files listed.

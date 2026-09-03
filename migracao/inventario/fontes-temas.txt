@@ -1,0 +1,18 @@
+## ~/.fonts
+ubuntu-mono-powerline-ttf
+
+## ~/.local/share/fonts
+
+## ~/.themes
+Orchis-Light
+Orchis-Light-Compact
+Orchis-Light-Compact-hdpi
+Orchis-Light-Compact-xhdpi
+Orchis-Light-hdpi
+Orchis-Light-xhdpi
+
+## ~/.icons + ~/.local/share/icons
+/home/cristhian/.local/share/icons:
+WhiteSur
+WhiteSur-dark
+WhiteSur-light

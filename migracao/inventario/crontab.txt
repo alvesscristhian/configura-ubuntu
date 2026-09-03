@@ -1,0 +1,1 @@
+10,40 9-21 * * *  docker exec chinalink-agenda python manage.py validate_meet_usage

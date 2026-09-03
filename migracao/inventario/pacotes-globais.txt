@@ -1,0 +1,10 @@
+## npm -g
+├── corepack@0.34.6
+└── npm@10.9.8
+
+
+## pipx
+
+## uv tools
+
+## cargo

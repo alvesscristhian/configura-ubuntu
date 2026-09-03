@@ -1,0 +1,22 @@
+# Mapa dos repos git. Voce escolheu levar os repos COPIADOS
+# (com .git e alteracoes locais), entao isto e so conferencia:
+# se algo se perder, esta lista diz de onde reclonar.
+
+CAMINHO                                                    REMOTE                                                         PENDENCIAS
+Documentos/Chinalink/Chinalink-Agenda                      https://github.com/CLT-Devops/Chinalink-Agenda.git             mod:0    nao-pushado:0
+Documentos/Chinalink/Chinalink-CLNE                        https://github.com/CLT-Devops/Chinalink-CLNE.git               mod:0    nao-pushado:0
+Documentos/Chinalink/Chinalink-CLP-Handover                https://github.com/CLT-Devops/Chinalink-CLP-Handover.git       mod:0    nao-pushado:0
+Documentos/Chinalink/Chinalink-ControlDesk                 https://github.com/CLT-Devops/Chinalink-ControlDesk.git        mod:0    nao-pushado:0
+Documentos/Chinalink/ChinaLink-FairApp                     https://github.com/CLT-Devops/ChinaLink-FairApp.git            mod:0    nao-pushado:0
+Documentos/Chinalink/Chinalink-FairHub                     https://github.com/CLT-Devops/Chinalink-FairHub.git            mod:1    nao-pushado:0
+Documentos/Chinalink/Chinalink-Houston                     https://github.com/CLT-Devops/Chinalink-Houston.git            mod:0    nao-pushado:0
+Documentos/Chinalink/Chinalink-Inspecta                    https://github.com/CLT-Devops/Chinalink-Inspecta.git           mod:0    nao-pushado:0
+Documentos/Chinalink/Chinalink-SupplierControl             https://github.com/CLT-Devops/Chinalink-SupplierControl.git    mod:0    nao-pushado:0
+Documentos/Chinalink/Chinalink-Teamwork                    https://github.com/CLT-Devops/Chinalink-Teamwork.git           mod:0    nao-pushado:0
+Documentos/Chinalink/Chinalink-TLDV                        https://github.com/CLT-Devops/Chinalink-TLDV.git               mod:1    nao-pushado:0
+Documentos/Pessoal/automacao-aladdin                       https://github.com/alvesscristhian/automacao-aladdin.git       mod:1    nao-pushado:0
+Documentos/Pessoal/baixadalabs/site                        https://github.com/alvesscristhian/baixada-labs.git            mod:0    nao-pushado:0
+Documentos/Pessoal/ecommerce-explosao                      cristhian@34.55.97.194:/home/cristhian/ecommerce-explosao      mod:2    nao-pushado:0
+Documentos/Pessoal/estudos/javascript-study                https://github.com/alvesscristhian/javascript-study.git        mod:3    nao-pushado:0
+Documentos/Pessoal/estudos/python_study                    https://github.com/alvesscristhian/python_study.git            mod:0    nao-pushado:0
+Documentos/Pessoal/estudos/react-pomodoro                  https://github.com/alvesscristhian/react-pomodoro.git          mod:0    nao-pushado:0

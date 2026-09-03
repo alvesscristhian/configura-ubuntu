@@ -1,0 +1,1 @@
+printer EPSON_L3250_Series is idle.  enabled since qui 03 set 2026 10:04:04

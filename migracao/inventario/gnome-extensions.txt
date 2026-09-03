@@ -1,0 +1,12 @@
+blur-my-shell@aunetx
+Rounded_Corners@lennart-k
+caffeine@patapon.info
+openbar@neuromorph
+tilingshell@ferrarodomenico.com
+user-theme@gnome-shell-extensions.gcampax.github.com
+ding@rastersoft.com
+snapd-prompting@canonical.com
+snapd-search-provider@canonical.com
+tiling-assistant@ubuntu.com
+ubuntu-appindicators@ubuntu.com
+web-search-provider@ubuntu.com

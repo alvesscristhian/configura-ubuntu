@@ -1,0 +1,17 @@
+# Gerado em: 2026-09-03T14:53:36-03:00
+# Host: cristhian-IdeaPad-Slim-3-15IRH10
+# Usuario: cristhian
+# Shell: /usr/bin/zsh
+
+## SO
+Distributor ID:	Ubuntu
+Description:	Ubuntu 26.04.1 LTS
+Release:	26.04
+Codename:	resolute
+
+## Kernel
+Linux cristhian-IdeaPad-Slim-3-15IRH10 7.0.0-30-generic #30-Ubuntu SMP PREEMPT_DYNAMIC Fri Jul 31 18:22:54 UTC 2026 x86_64 GNU/Linux
+
+## Sessao grafica
+XDG_SESSION_TYPE=wayland  XDG_CURRENT_DESKTOP=ubuntu:GNOME
+GNOME Shell 50.1

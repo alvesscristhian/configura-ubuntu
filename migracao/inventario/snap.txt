@@ -1,0 +1,8 @@
+brave	latest/stable	-
+claude-ai-desktop	latest/stable	-
+code	latest/stable	classic
+dbeaver-ce	latest/stable	classic
+firefox	latest/stable/ubuntu-26.04	-
+postman	v11/stable	-
+remmina	latest/stable	-
+spotify	latest/stable	-

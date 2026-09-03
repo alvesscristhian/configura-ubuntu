@@ -1,0 +1,212 @@
+# Lista de exclusao para a migracao (formato rsync --exclude-from).
+# Padrao com / no inicio = ancorado na raiz da home. Sem / = casa em qualquer nivel.
+#
+# Regra: aqui entra SO o que se regenera sozinho no PC novo.
+# Se voce tem duvida se algo e regeneravel, TIRE daqui - copiar de mais
+# custa disco, copiar de menos custa o dado.
+#
+# Nao versionado no git: este arquivo referencia so caminhos, nunca conteudo.
+
+# ---------------------------------------------------------------
+# O proprio staging (evita a copia se copiar a si mesma)
+# ---------------------------------------------------------------
+/migracao
+
+# ---------------------------------------------------------------
+# Caches de sistema e lixeira  (~5.6 GB)
+# ---------------------------------------------------------------
+/.cache
+/.local/share/Trash
+
+# Cache DENTRO de apps - padroes SEM "/" inicial, entao casam em
+# qualquer nivel. O "/.cache" acima e ancorado na raiz da home e
+# nao pegava snap/brave/common/.cache (2.1 GB),
+# snap/firefox/common/.cache (704 MB) nem .config/obsidian/Cache.
+# A barra no fim restringe a diretorio: nao apaga arquivo chamado
+# "Cache" nem o banco "Web Data".
+.cache/
+Cache/
+Cache_Data/
+CachedData/
+CachedProfilesData/
+DawnWebGPUCache/
+DawnGraphiteCache/
+GPUPersistentCache/
+blob_storage/
+/.zcompdump
+/.zcompdump-*
+/.zcompdump-*.zwc
+hs_err_pid*.log
+core
+*.pyc
+
+# ---------------------------------------------------------------
+# Spotify: os 12 GB sao musica offline em snap/spotify/common/.cache,
+# ja cortados pelo padrao ".cache/" acima.
+#
+# O resto do Spotify sao 620 KB (login e preferencias, em
+# snap/spotify/99/.config/spotify) e viajam - assim voce nao
+# precisa logar de novo. Nao excluir o app inteiro por 620 KB.
+# ---------------------------------------------------------------
+
+# ---------------------------------------------------------------
+# O symlink ~/snap/<app>/current NAO viaja.
+#
+# Ele aponta pra revisao instalada (ex: brave -> 674). No PC novo o
+# snapd instala outro numero e cria o symlink dele. Se a copia
+# sobrescrevesse esse symlink com "-> 674", o app abriria sem perfil.
+#
+# O dado da revisao antiga vai junto e a etapa `snaps-dados` do
+# 04-restaurar.sh o move pra revisao nova. E o que salva o
+# historico do Brave.
+# ---------------------------------------------------------------
+/snap/*/current
+
+# ---------------------------------------------------------------
+# Artefatos de build dos repos  (~3.5 GB)
+# Os repos vao inteiros (com .git e alteracoes locais), mas sem isto.
+# Recuperavel com: npm install / uv sync / pip install -r
+# ---------------------------------------------------------------
+node_modules
+__pycache__
+.pytest_cache
+.mypy_cache
+.ruff_cache
+.venv
+venv
+/Documentos/**/dist
+/Documentos/**/build
+/Documentos/**/.next
+/Documentos/**/.nuxt
+/Documentos/**/coverage
+/Documentos/**/.turbo
+
+# ---------------------------------------------------------------
+# Gerenciadores de versao  (~1.4 GB)
+# As versoes exatas ficam em inventario/runtimes.txt e o
+# 04-restaurar.sh reinstala. Copiar binario compilado entre
+# maquinas nao vale o disco.
+# ---------------------------------------------------------------
+/.nvm
+/.pyenv
+/.bun
+/.dotnet
+/.npm/_cacache
+/.gradle/caches
+/.gradle/wrapper
+/.local/share/uv
+
+# ---------------------------------------------------------------
+# Android SDK  (619 MB) - reinstalavel pelo Android Studio
+# ---------------------------------------------------------------
+/Android/Sdk
+
+# ---------------------------------------------------------------
+# VS Code
+# ---------------------------------------------------------------
+# Extensoes: 1.7 GB. A lista vai em inventario/vscode-extensions.txt
+# e o restaurar reinstala via `code --install-extension`.
+/.vscode/extensions
+/.vscode-shared
+
+# Instalacao FLATPAK do VS Code (2.3 GB) - voce usa a versao SNAP
+# (/snap/bin/code). Esta pasta e a segunda instalacao, sem uso.
+# Se quiser migrar o flatpak em vez do snap, comente a linha abaixo.
+/.var/app/com.visualstudio.code
+
+# Caches do perfil do Code que voce USA (~1.9 GB dos 2.0 GB)
+# As settings/keybindings/snippets ficam em .config/Code/User - preservado.
+/.config/Code/Cache
+/.config/Code/CachedData
+/.config/Code/CachedExtensionVSIXs
+/.config/Code/CachedProfilesData
+/.config/Code/GPUCache
+/.config/Code/WebStorage
+/.config/Code/agent-host
+/.config/Code/Service Worker
+/.config/Code/Crashpad
+/.config/Code/logs
+/.config/Code/User/workspaceStorage
+/.config/Code/User/History
+/.config/Code/User/globalStorage/state.vscdb.backup
+
+# Revisoes antigas do snap do Code (739 MB cada, duas copias)
+# O 02-empacotar.sh resolve isso dinamicamente lendo o symlink `current`.
+
+# ---------------------------------------------------------------
+# Caches de navegador (Chrome / Brave / Firefox)
+# Bookmarks, senhas, cookies, historico e extensoes SAO preservados.
+# Isto aqui e so cache, que o browser refaz no primeiro uso.
+# ---------------------------------------------------------------
+Service Worker
+Code Cache
+GPUCache
+GrShaderCache
+ShaderCache
+component_crx_cache
+optimization_guide_model_store
+OnDeviceHeadSuggestModel
+BrowserMetrics
+BrowserMetrics-spare.pma
+DeferredBrowserMetrics
+CertificateRevocation
+Crash Reports
+Safe Browsing
+segmentation_platform
+/.config/google-chrome/*/File System
+/.mozilla/firefox/*/cache2
+/.mozilla/firefox/*/startupCache
+
+# ---------------------------------------------------------------
+# Caches de flatpak
+# ---------------------------------------------------------------
+/.var/app/*/cache
+
+# ---------------------------------------------------------------
+# Sockets, locks e efemeros (nao fazem sentido em outra maquina)
+# ---------------------------------------------------------------
+.X11-unix
+*.sock
+*.socket
+.esd_auth
+SingletonLock
+SingletonCookie
+SingletonSocket
+lockfile
+/.gnupg/S.*
+/.docker/run
+
+# ---------------------------------------------------------------
+# SEGREDOS - saem daqui e vao no pacote cifrado (03-segredos.sh)
+# Excluidos do pacote comum de proposito: chave privada nao deve
+# viajar em tar sem cifra nem encostar em repo git.
+#
+# Nada aqui e "perdido": tudo isto viaja no 03-segredos.sh, cifrado.
+# ---------------------------------------------------------------
+/.ssh
+/.gnupg
+/.aws
+/.cf-pages-token
+/.config/gh/hosts.yml
+/.docker/config.json
+/.docker/.token_seed
+/.docker/.token_seed.lock
+/bwdata
+/Documentos/secret acess key *.txt
+
+# Credenciais do Claude Code e chaves de sessao
+/.claude/.credentials.json
+/.claude/daemon/control.key
+/.claude/sessions/*.key
+
+# Chave e config de OpenVPN em Downloads
+/Downloads/*.key
+/Downloads/*.ovpn
+/Downloads/*.p12
+/Downloads/*.pem
+
+# NOTA sobre os arquivos .env dos repos:
+# Nao ficam listados aqui - a exclusao deles e feita por regras de
+# --filter no proprio 02-empacotar.sh (variavel FILTRO_ENV), porque
+# --exclude-from nao aceita negacao e os .env.example PRECISAM ser
+# preservados (sao template versionado, nao segredo).

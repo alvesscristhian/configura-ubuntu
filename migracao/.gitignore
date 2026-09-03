@@ -1,0 +1,8 @@
+# Pacote cifrado de segredos - NUNCA no git, mesmo privado.
+# O 03-segredos.sh gera aqui; o transporte e pendrive, nao repositorio.
+segredos-*.tar.gz.gpg
+
+# Gerados em tempo de execucao
+.exclude-dinamico.txt
+dconf-antes-da-restauracao.ini
+apt-faltaram.txt
