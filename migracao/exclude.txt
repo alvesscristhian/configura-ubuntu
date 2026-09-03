@@ -8,9 +8,15 @@
 # Nao versionado no git: este arquivo referencia so caminhos, nunca conteudo.
 
 # ---------------------------------------------------------------
-# O proprio staging (evita a copia se copiar a si mesma)
+# Este pacote vive em ~/dotfiles/migracao e VIAJA junto (188 KB),
+# de proposito: assim os scripts e o inventario chegam no PC novo
+# sem transporte separado. ~/dotfiles nao e excluido - o corte de
+# repos git vale so pra ~/Documentos.
+#
+# Nada a excluir aqui. Se voce mover este pacote pra fora de
+# ~/dotfiles, cuide de nao apontar o destino da copia pra dentro
+# da propria origem.
 # ---------------------------------------------------------------
-/migracao
 
 # ---------------------------------------------------------------
 # Caches de sistema e lixeira  (~5.6 GB)
