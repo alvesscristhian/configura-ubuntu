@@ -116,4 +116,3 @@ if ! shopt -oq posix; then
   fi
 fi
 
-. "/tmp/claude-1000/-home-cristhian-Documentos-Chinalink-Chinalink-FairHub/6306208b-ac6f-4ae4-b659-ba7f739ed2a8/scratchpad/uv-bin/env"
