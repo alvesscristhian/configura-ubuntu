@@ -213,33 +213,80 @@ histórico antes de apagar as pastas `.migrado-*`.
 
 ---
 
-## HD externo em exFAT/NTFS
+## HD externo em exFAT/NTFS — modo `--tar`
 
-`rsync -aHAX` precisa de filesystem Linux. Se o HD for exFAT ou NTFS, o
-`02` avisa. Nesse caso use tar, que carrega as permissões dentro do arquivo:
+`rsync -aHAX` precisa de filesystem Linux para guardar permissão, dono e
+symlink. Se o destino for exFAT ou NTFS, use o modo `--tar`, que carrega
+tudo isso dentro do próprio arquivo:
 
 ```bash
 # PC antigo
-tar --exclude-from=exclude.txt --numeric-owner \
-    -cvzf /media/cristhian/HD/home.tar.gz -C "$HOME" .
+./02-empacotar.sh --tar /media/cristhian/PENDRIVE
 
 # PC novo
-tar --numeric-owner -xvzf /media/cristhian/HD/home.tar.gz -C "$HOME"
-./04-restaurar.sh "$HOME" apt snaps flatpaks limpeza zsh dconf vscode runtimes fontes
+tar --numeric-owner -xf /media/cristhian/PENDRIVE/home-*.tar.zst -C "$HOME"
+cd ~/dotfiles/migracao        # veio dentro do próprio pacote
+./04-restaurar.sh "$HOME" apt snaps flatpaks snaps-dados limpeza \
+     zsh dconf vscode runtimes fontes
 ```
+
+Note que a etapa `home` é omitida: o `tar` já colocou os arquivos no lugar.
+
+O modo usa zstd se estiver instalado (bem mais rápido que gzip nesse
+volume), verifica o arquivo relendo as entradas, e aborta se o destino for
+FAT32 — que não aceita arquivo acima de 4 GB.
+
+> **Não** rode `tar --exclude-from=exclude.txt` na mão. Os formatos de
+> padrão do tar e do rsync são diferentes: o tar ignora a ancoragem no
+> início (`/.cache`), então nada seria excluído e os 12 GB de cache do
+> Spotify entrariam no arquivo. Verificado — o tar inclui `.cache/` onde o
+> rsync exclui.
+>
+> O modo `--tar` evita isso não traduzindo padrão nenhum: pede a lista de
+> arquivos ao rsync, que é quem entende o `exclude.txt`, e entrega pronta
+> ao tar com `--no-recursion`.
 
 ---
 
-## Ordem sugerida no dia
+## Os dois PCs não precisam estar juntos
 
-1. **PC antigo:** `./01-inventario.sh`
-2. **PC antigo:** `./02-empacotar.sh --teste` → confira a lista
-3. **PC antigo:** `./02-empacotar.sh <destino>` (pode rodar dias antes; é incremental)
-4. **PC antigo:** `./03-segredos.sh` → pendrive separado
-5. **PC antigo:** rodar o `02` uma última vez antes de desligar
-6. **PC novo:** copiar `~/migracao` pra lá, então `./04-restaurar.sh <origem>`
-7. **PC novo:** restaurar segredos, relogar, seguir o checklist final do `04`
-8. **Só depois de conferir tudo:** formatar o PC antigo
+Nada aqui exige as duas máquinas ligadas ao mesmo tempo ou na mesma rede.
+O `01`, `02` e `03` rodam sozinhos no PC antigo e produzem arquivos; o `04`
+lê esses arquivos no PC novo, dias depois se for o caso.
+
+A única coisa que **precisa** do PC antigo é gerar o pacote. Depois disso
+ele pode ficar onde está.
+
+### PC antigo — fazer antes de sair de perto dele
+
+```bash
+cd ~/dotfiles/migracao
+./01-inventario.sh                              # 1. inventário
+git -C ~/dotfiles add -A && git -C ~/dotfiles commit -m "inventario" \
+  && git -C ~/dotfiles push                     # 2. inventário pro GitHub
+./02-empacotar.sh --teste                       # 3. confira a lista
+./02-empacotar.sh --tar /media/cristhian/PENDRIVE   # 4. o pacote (5,8 GB)
+./03-segredos.sh                                # 5. chaves, cifradas
+```
+
+E o que não é script: **push dos commits pendentes** nos repos
+(`inventario/repos-git.txt` lista quais). Isso não viaja no pacote.
+
+### PC novo — depois, sem pressa
+
+```bash
+git clone https://github.com/alvesscristhian/configura-ubuntu.git ~/dotfiles
+tar --numeric-owner -xf /media/.../home-*.tar.zst -C "$HOME"
+cd ~/dotfiles/migracao
+./04-restaurar.sh "$HOME" apt snaps flatpaks snaps-dados limpeza \
+     zsh dconf vscode runtimes fontes
+gpg --decrypt segredos-*.tar.gz.gpg | tar -xzf - -C "$HOME"
+```
+
+Depois relogar e seguir o checklist final que o `04` imprime.
+
+**Só formate o PC antigo depois de conferir tudo no novo** — histórico do
+Brave, vaults do Obsidian, `.zsh_history`, e os repos clonados.
 
 O `04` aceita etapas individuais — `./04-restaurar.sh --etapas` lista todas.
 

@@ -7,15 +7,21 @@
 #
 # Uso:
 #   ./02-empacotar.sh --teste                     # simula, nao copia nada
-#   ./02-empacotar.sh /media/cristhian/HD/migra   # HD externo
+#   ./02-empacotar.sh /media/cristhian/HD/migra   # pasta (HD em ext4)
+#   ./02-empacotar.sh --tar /media/cristhian/PEN  # arquivo unico (exFAT/NTFS)
 #   ./02-empacotar.sh cristhian@192.168.0.42:/home/cristhian/migra
 #
 # Flags:
 #   --teste     dry-run: mostra o que copiaria e o tamanho total
+#   --tar       gera UM arquivo .tar em vez de copiar arquivo por arquivo.
+#               Use quando o destino nao for ext4/xfs/btrfs: exFAT e NTFS
+#               nao guardam permissao, dono nem symlink do Linux, e o tar
+#               carrega tudo isso dentro do proprio arquivo.
 #   --sim       executa de verdade (sem isso, pede confirmacao)
 #
-# E incremental: rodar de novo copia so o que mudou. Pode rodar
-# hoje pra adiantar e de novo amanha antes de desligar o PC antigo.
+# No modo pasta e incremental: rodar de novo copia so o que mudou. Pode
+# rodar hoje pra adiantar e de novo amanha antes de desligar o PC antigo.
+# O modo --tar refaz o arquivo inteiro a cada vez.
 # ============================================================
 set -uo pipefail
 
@@ -27,11 +33,12 @@ log()  { printf '\033[1;34m>>\033[0m %s\n' "$*"; }
 warn() { printf '\033[1;33m!!\033[0m %s\n' "$*"; }
 err()  { printf '\033[1;31mXX\033[0m %s\n' "$*" >&2; }
 
-TESTE=0; SIM=0; DESTINO=""
+TESTE=0; SIM=0; TAR=0; DESTINO=""
 for a in "$@"; do
   case "$a" in
     --teste|--dry-run) TESTE=1 ;;
     --sim|--yes)       SIM=1 ;;
+    --tar)             TAR=1 ;;
     -*)  err "flag desconhecida: $a"; exit 2 ;;
     *)   DESTINO="$a" ;;
   esac
@@ -163,8 +170,118 @@ estimar() {
 
 gb() { awk -v b="$1" 'BEGIN{ printf "%.1f GB", b/1073741824 }'; }
 
+# ------------------------------------------------------------
+# lista_exata - os caminhos que devem entrar, um por linha,
+# relativos a $HOME.
+#
+# Existe porque o modo --tar NAO pode usar `tar --exclude-from`
+# com o exclude.txt: os formatos sao diferentes. O tar ignora a
+# ancoragem no inicio do padrao, entao "/.cache" nao exclui nada
+# e os 12 GB de cache do Spotify entrariam no arquivo.
+#
+# A solucao e nao traduzir padrao nenhum: pede a lista pro rsync,
+# que e quem entende o exclude.txt, e entrega pronta pro tar com
+# --no-recursion (assim o tar nao reexpande diretorio e nao traz
+# de volta o que foi excluido).
+# ------------------------------------------------------------
+lista_exata() {
+  rsync -aHAX --numeric-ids --dry-run \
+    --exclude-from="$EXCLUDE" --exclude-from="$DINAMICO" \
+    --out-format='%n' \
+    "$HOME/" /tmp/destino-inexistente/ 2>/dev/null \
+  | grep -vx '\./' | grep -vx '\.'
+}
+
 # SSH ou local?
-if [[ "$DESTINO" == *:* ]] && [[ "$DESTINO" != /* ]]; then
+if [ $TAR -eq 1 ] && [ $TESTE -eq 0 ]; then
+  log "Modo: arquivo unico (tar) -> $DESTINO"
+
+  command -v tar >/dev/null || { err "tar nao instalado"; exit 1; }
+
+  # destino pode ser a pasta do pendrive ou o caminho do arquivo
+  if [ -d "$DESTINO" ]; then
+    ARQ="$DESTINO/home-$(hostname)-$(date +%Y%m%d-%H%M).tar"
+  else
+    ARQ="$DESTINO"
+    mkdir -p "$(dirname "$ARQ")" 2>/dev/null || true
+  fi
+
+  # zstd comprime muito mais rapido que gzip nesse volume
+  if command -v zstd >/dev/null; then
+    COMP=(--zstd); ARQ="${ARQ%.tar}.tar.zst"
+    log "  compressao: zstd"
+  else
+    COMP=(-z);     ARQ="${ARQ%.tar}.tar.gz"
+    log "  compressao: gzip (instale zstd pra ir mais rapido)"
+  fi
+
+  log "Calculando o payload real..."
+  estimar
+  destino_dir=$(dirname "$ARQ")
+  livre=$(df -PB1 "$destino_dir" | tail -1 | awk '{print $4}')
+  log "Payload: $(gb "$EST_TOTAL") | livre no destino: $(gb "$livre")"
+  [ "$EST_TOTAL" -lt "$livre" ] || { err "Destino sem espaco."; exit 1; }
+
+  # FAT32 nao aceita arquivo acima de 4 GB - o tar unico nao caberia
+  fstype=$(findmnt -n -o FSTYPE --target "$destino_dir" 2>/dev/null || echo "?")
+  log "  filesystem do destino: $fstype"
+  if [ "$fstype" = "vfat" ] || [ "$fstype" = "msdos" ]; then
+    err "FAT32 nao aceita arquivo maior que 4 GB e o pacote tem $(gb "$EST_TOTAL")."
+    err "Reformate o pendrive como exFAT (sem limite) ou ext4 (e use o modo pasta)."
+    exit 1
+  fi
+
+  if [ $SIM -eq 0 ]; then
+    echo
+    warn "Vai gerar $(gb "$EST_TOTAL") (comprimido, menos) em: $ARQ"
+    warn "Segredos NAO vao aqui - use o 03-segredos.sh."
+    read -r -p "Continuar? [s/N] " r
+    [[ "$r" =~ ^[sS]$ ]] || { log "abortado"; exit 0; }
+  fi
+
+  LISTA_TAR="$(mktemp)"
+  log "Montando a lista de arquivos (via rsync, que entende o exclude.txt)..."
+  lista_exata > "$LISTA_TAR"
+  n_itens=$(wc -l < "$LISTA_TAR")
+  log "  $n_itens itens"
+
+  log "Gerando o arquivo... (demora; e uma passada unica sobre $(gb "$EST_TOTAL"))"
+  if tar -C "$HOME" --numeric-owner --no-recursion \
+         --files-from="$LISTA_TAR" "${COMP[@]}" -cf "$ARQ"; then
+    log "Gerado: $ARQ ($(du -h "$ARQ" | cut -f1))"
+  else
+    err "tar falhou"; rm -f "$LISTA_TAR"; exit 1
+  fi
+
+  # Verificacao: o arquivo abre e tem a quantidade certa de entradas?
+  log "Verificando o arquivo..."
+  n_tar=$(tar -tf "$ARQ" 2>/dev/null | wc -l)
+  rm -f "$LISTA_TAR"
+  if [ "$n_tar" -eq 0 ]; then
+    err "O arquivo nao abriu. Nao confie nele."; exit 1
+  fi
+  log "  $n_tar entradas legiveis (lista tinha $n_itens)"
+  [ "$n_tar" -ge "$n_itens" ] || warn "  menos entradas que o esperado - revise"
+
+  cat <<EOF
+
+------------------------------------------------------------
+Proximos passos:
+
+  1. ./03-segredos.sh                    (pacote cifrado, a parte)
+  2. Leve o pendrive pra casa.
+  3. No PC novo:
+       tar --numeric-owner -xf <arquivo> -C \$HOME
+       cd ~/dotfiles/migracao   # veio dentro do proprio pacote
+       ./04-restaurar.sh "\$HOME" apt snaps flatpaks snaps-dados \\
+            limpeza zsh dconf vscode runtimes fontes
+
+     (pula a etapa 'home': o tar ja colocou os arquivos no lugar)
+------------------------------------------------------------
+EOF
+  exit 0
+
+elif [[ "$DESTINO" == *:* ]] && [[ "$DESTINO" != /* ]]; then
   log "Modo: SSH -> $DESTINO"
   RSYNC+=( -e "ssh -o Compression=no" --compress )
   warn "Confirme antes que o PC novo aceita ssh: ssh ${DESTINO%%:*} true"
