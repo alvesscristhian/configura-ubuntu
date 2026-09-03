@@ -46,6 +46,8 @@ CANDIDATOS=(
   .claude/.credentials.json  # credenciais do Claude Code
   .claude/daemon/control.key
   .codex/auth.json
+  .local/share/keyrings      # chaveiro do GNOME: senhas salvas de app e
+                             # a chave que decifra as senhas do Chrome/Brave
 )
 
 log "Selecionando arquivos sensiveis..."

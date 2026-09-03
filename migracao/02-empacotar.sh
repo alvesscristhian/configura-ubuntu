@@ -203,8 +203,35 @@ if [ $TAR -eq 1 ] && [ $TESTE -eq 0 ]; then
     ARQ="$DESTINO/home-$(hostname)-$(date +%Y%m%d-%H%M).tar"
   else
     ARQ="$DESTINO"
-    mkdir -p "$(dirname "$ARQ")" 2>/dev/null || true
   fi
+
+  # ----------------------------------------------------------
+  # O destino existe MESMO?
+  #
+  # Sem esta checagem, um pendrive nao montado levava o df a falhar,
+  # $livre saia vazio, e o script reclamava "Destino sem espaco" -
+  # mensagem errada pro problema real, que era o caminho nao existir.
+  # ----------------------------------------------------------
+  destino_dir=$(dirname "$ARQ")
+  if [ ! -d "$destino_dir" ]; then
+    err "A pasta de destino nao existe: $destino_dir"
+    if [[ "$destino_dir" == /media/* ]] || [[ "$destino_dir" == /mnt/* ]]; then
+      err "Parece caminho de pendrive/HD externo - ele esta montado?"
+      echo
+      warn "O que esta montado em /media e /mnt agora:"
+      found=0
+      for m in /media/* /media/*/* /mnt/*; do
+        [ -d "$m" ] || continue
+        printf '       %s\n' "$m"; found=1
+      done
+      [ "$found" -eq 0 ] && printf '       (nada)\n'
+      echo
+      warn "Plugue o dispositivo, abra o Arquivos pra montar, e confira o"
+      warn "caminho exato com:  lsblk -o NAME,SIZE,FSTYPE,MOUNTPOINT,LABEL"
+    fi
+    exit 1
+  fi
+  [ -w "$destino_dir" ] || { err "Sem permissao de escrita em: $destino_dir"; exit 1; }
 
   # zstd comprime muito mais rapido que gzip nesse volume
   if command -v zstd >/dev/null; then
@@ -217,10 +244,17 @@ if [ $TAR -eq 1 ] && [ $TESTE -eq 0 ]; then
 
   log "Calculando o payload real..."
   estimar
-  destino_dir=$(dirname "$ARQ")
-  livre=$(df -PB1 "$destino_dir" | tail -1 | awk '{print $4}')
+  livre=$(df -PB1 "$destino_dir" 2>/dev/null | tail -1 | awk '{print $4}')
+  if ! [[ "$livre" =~ ^[0-9]+$ ]]; then
+    err "Nao consegui ler o espaco livre de $destino_dir (df falhou)."
+    exit 1
+  fi
   log "Payload: $(gb "$EST_TOTAL") | livre no destino: $(gb "$livre")"
-  [ "$EST_TOTAL" -lt "$livre" ] || { err "Destino sem espaco."; exit 1; }
+  if [ "$EST_TOTAL" -ge "$livre" ]; then
+    err "Destino sem espaco: precisa de $(gb "$EST_TOTAL"), tem $(gb "$livre")."
+    err "(o .tar comprimido fica menor, mas o tar precisa de folga pra escrever)"
+    exit 1
+  fi
 
   # FAT32 nao aceita arquivo acima de 4 GB - o tar unico nao caberia
   fstype=$(findmnt -n -o FSTYPE --target "$destino_dir" 2>/dev/null || echo "?")

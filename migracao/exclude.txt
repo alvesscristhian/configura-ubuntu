@@ -22,7 +22,18 @@
 # Caches de sistema e lixeira  (~5.6 GB)
 # ---------------------------------------------------------------
 /.cache
-/.local/share/Trash
+
+# Lixeira - padrao SEM "/" inicial, de proposito.
+#
+# O "/.local/share/Trash" ancorado que estava aqui antes NAO pegava a
+# lixeira DENTRO dos snaps. E o snap do VS Code tinha, em
+# snap/code/259/.local/share/Trash/files/.env, um arquivo com
+# DJANGO_SECRET_KEY e tres senhas de banco (CONTROLDESK_DB_PASSWORD,
+# RAVENA_LEGACY_DB_PASSWORD, CHINALINK_DB_PASSWORD) - deletado, mas
+# ainda no disco e indo pro pacote aberto.
+#
+# Arquivo na lixeira e arquivo que voce ja jogou fora: nao viaja.
+Trash/
 
 # Cache DENTRO de apps - padroes SEM "/" inicial, entao casam em
 # qualquer nivel. O "/.cache" acima e ancorado na raiz da home e
@@ -169,6 +180,23 @@ segmentation_platform
 /.var/app/*/cache
 
 # ---------------------------------------------------------------
+# NAO excluidos, decidido de proposito
+#
+# Aparecem numa varredura por "arquivo com cara de segredo", mas nao
+# sao segredo - e tira-los daria trabalho no PC novo sem ganho:
+#
+#   .android/debug.keystore
+#       chave de assinatura de build DEBUG do Android. A senha e
+#       "android", publica e igual em toda instalacao. Levar evita
+#       reassinar os builds de debug.
+#
+#   snap/remmina/*/.config/freerdp/server/*.pem
+#       certificado PUBLICO do servidor RDP, equivalente ao
+#       known_hosts do ssh. Levar evita reaceitar o certificado.
+#       Carrega um IP interno, o que e aceitavel num transporte seu.
+# ---------------------------------------------------------------
+
+# ---------------------------------------------------------------
 # Sockets, locks e efemeros (nao fazem sentido em outra maquina)
 # ---------------------------------------------------------------
 .X11-unix
@@ -200,16 +228,31 @@ lockfile
 /bwdata
 /Documentos/secret acess key *.txt
 
-# Credenciais do Claude Code e chaves de sessao
+# Credenciais do Claude Code e do Codex
 /.claude/.credentials.json
 /.claude/daemon/control.key
 /.claude/sessions/*.key
+/.codex/auth.json
+
+# Chaveiro do GNOME. Guarda senha salva de aplicativo, e e a chave com
+# que Chrome/Brave cifram as senhas do navegador - sem ele as senhas
+# salvas nao abrem no PC novo. Por isso viaja, mas so cifrado.
+/.local/share/keyrings
 
 # Chave e config de OpenVPN em Downloads
 /Downloads/*.key
 /Downloads/*.ovpn
 /Downloads/*.p12
 /Downloads/*.pem
+
+# Banco de senhas do KeePass, em qualquer lugar (sem "/" inicial).
+# Aqui e o "Downloads/Senhas org.kdbx".
+*.kdbx
+
+# O proprio pacote cifrado gerado pelo 03-segredos.sh. Ele nasce nesta
+# pasta, que viaja - sem esta linha o pacote de segredos entraria de
+# carona no pacote comum, anulando a ideia de transporte separado.
+segredos-*.tar.gz.gpg
 
 # NOTA sobre os arquivos .env dos repos:
 # Nao ficam listados aqui - a exclusao deles e feita por regras de
