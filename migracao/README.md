@@ -1,5 +1,9 @@
 # Migração de PC — Ubuntu
 
+> **Vai migrar agora?** O [PASSO-A-PASSO.md](PASSO-A-PASSO.md) tem a ordem
+> completa, comando por comando, com o que conferir em cada etapa.
+> Este README explica *como as peças funcionam*; aquele diz *o que fazer*.
+
 Pacote para levar **este** PC (`cristhian@IdeaPad-Slim-3-15IRH10`) para outro:
 configs de terminal, VS Code, pastas, dados, históricos e apps.
 
