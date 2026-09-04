@@ -317,8 +317,23 @@ EOF
 
 elif [[ "$DESTINO" == *:* ]] && [[ "$DESTINO" != /* ]]; then
   log "Modo: SSH -> $DESTINO"
-  RSYNC+=( -e "ssh -o Compression=no" --compress )
-  warn "Confirme antes que o PC novo aceita ssh: ssh ${DESTINO%%:*} true"
+
+  # ControlMaster: uma autenticacao serve pra toda a execucao. Sem isto,
+  # se voce autentica por SENHA (e nao por chave), o ssh pede a senha de
+  # novo em cada conexao que o script abrir.
+  SSH_SOCK="$AQUI/.ssh-mux-$$"
+  RSYNC+=( -e "ssh -o Compression=no -o ControlMaster=auto -o ControlPath=$SSH_SOCK -o ControlPersist=600" )
+  RSYNC+=( --compress )
+  trap 'ssh -o ControlPath="$SSH_SOCK" -O exit "${DESTINO%%:*}" 2>/dev/null; rm -f "$EST_LISTA" "$DINAMICO" "$SSH_SOCK"' EXIT
+
+  # A estimativa e feita LOCALMENTE de proposito (estimar sem argumento).
+  # Passar o destino remoto faria o dry-run abrir uma conexao SSH so pra
+  # medir tamanho - e uma senha a mais pra digitar, sem ganho nenhum:
+  # o que se mede e o lado de origem.
+  log "Calculando o payload (local, sem abrir conexao)..."
+  estimar
+  log "Payload: $(gb "$EST_TOTAL")"
+  warn "Vai pedir a senha de $DESTINO uma vez."
 elif [ -n "$DESTINO" ]; then
   log "Modo: local -> $DESTINO"
   mkdir -p "$DESTINO" 2>/dev/null || { err "nao consegui criar $DESTINO"; exit 1; }
@@ -366,7 +381,8 @@ fi
 # Confirmacao
 # ------------------------------------------------------------
 if [ $SIM -eq 0 ]; then
-  [ "$EST_TOTAL" -gt 0 ] || { log "Calculando o payload..."; estimar "$DESTINO"; }
+  # sem argumento: mede a origem sem abrir conexao com o destino
+  [ "$EST_TOTAL" -gt 0 ] || { log "Calculando o payload..."; estimar; }
   echo
   warn "Vai copiar $(gb "$EST_TOTAL") de $HOME para $DESTINO"
   warn "Segredos (.ssh/.gnupg/.aws/bwdata) NAO vao aqui - use o 03-segredos.sh."
